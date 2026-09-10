@@ -2,7 +2,7 @@ import { useState } from "react";
 
 type SquareProp = {
   value: string | null;
-  hadleClick: () => void;
+  handleClick: () => void;
 };
 
 const Square = ({ value, handleClick }: SquareProp) => {
