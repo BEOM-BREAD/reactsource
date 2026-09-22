@@ -2,7 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import BoardForm from "../components/BoardForm";
 import { useEffect, useState } from "react";
 import type { Board, BoardUpSert } from "../types/board";
-import { getBoard, putBoard } from "../apis/boardApi";
+import { getBoard, putBoard } from "../apis/taskApi";
 import useBoard from "../hooks/useBoard";
 
 const BoardEdit = () => {

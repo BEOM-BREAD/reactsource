@@ -1,5 +1,5 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { deleteBoard, getBoard } from "../apis/boardApi";
+import { deleteBoard, getBoard } from "../apis/taskApi";
 import useBoard from "../hooks/useBoard";
 
 const BoardDetail = () => {

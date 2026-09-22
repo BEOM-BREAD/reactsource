@@ -1,65 +1,68 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import "./App.css";
 import TodoTeamplate from "./components/TodoTemplate";
 import TodoHeader from "./components/TodoHeader";
 import TodoInsert from "./components/TodoInsert";
 import { initialTodos, type Todo, type TodoCreate } from "./types/todo";
 import TodoList from "./components/TodoList";
+import { deleteTodo, getTodos, postTodo, putTodo } from "./apis/todoApi";
+import Loading from "./components/Loading";
+import useFetch from "./hooks/useFetch";
 
 function App() {
-  const [todos, setTodos] = useState<Todo[]>(initialTodos);
+  const { todos, loading, fetchData, completedFilter, setCompletedFilter } = useFetch();
 
   // id값
   const nextId = useRef(4);
 
-  const onInsert = (todo: TodoCreate) => {
-    // todos 변경
-    // id : nextId.current
-    // ... : {} 들어온 걸 개별로 풀어서
-    const newTodo = { ...todo, id: nextId.current, createDate: new Date(), lastModifiedDate: new Date() };
+  const onInsert = async (todo: TodoCreate) => {
+    const newTodo = {
+      ...todo,
+      id: nextId.current,
+      createDate: new Date(),
+      lastModifiedDate: new Date(),
+    };
     console.log("newTodo", newTodo);
-    // {title: '강아지 산책' ,completed: false, important: true, id:4}
-    // todos({{},{},{},{}})
-    setTodos([
-      // 원본복사
-      ...todos,
-      // 새로운 todo추가
-      newTodo,
-    ]);
-    // 재렌더링이 되어도 값을 유지함
-    nextId.current += 1;
+
+    // 데이터 삽입 서버 요청
+    const result = await postTodo(newTodo);
+
+    if (result.message === "success") {
+      // 서버로 전체 데이터 요청
+      fetchData(completedFilter);
+
+      nextId.current += 1;
+    }
   };
 
-  const onDelete = (id: number) => {
-    // todos 에서 삭제된 id와 동일한 todo 가 아닌 걸 찾아서 setTodos() 변경
-    // filter() => 새로운 배열
-    setTodos(todos.filter((todo) => todo.id !== id));
+  const onDelete = async (id: string) => {
+    const result = await deleteTodo(id);
+    if (result.message === "success") fetchData(completedFilter);
   };
 
-  const onUpdate = (id: number) => {
+  const onUpdate = async (id: number) => {
     // todos에서 id와 동일한 todo를 찾아서 completed 반대로 변경
-    setTodos(
-      todos.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed, lastModifiedDate: new Date() } : todo,
-      ),
-    );
+    const updateTodo = todos.find((todo) => todo.id === id);
+
+    if (updateTodo) {
+      updateTodo.completed = !updateTodo.completed;
+      const result = await putTodo(String(id), updateTodo);
+      if (result.message === "success") fetchData(completedFilter);
+    }
   };
 
   // 완료 , 미완료 선택부분
-  const getTodosByCompleted = (completed: boolean) => {};
-
-  // todos 값 확인
-  // 컴포넌트 생명주기에 코드를 실행하고 싶을때
-  useEffect(() => {
-    console.log("todos", todos);
-  }, [todos]);
+  const getTodosByCompleted = (completed: string) => {
+    // Boolean('true') true
+    setCompletedFilter(completed === "" ? null : completed === "true");
+  };
 
   return (
     <>
       <TodoTeamplate>
         <TodoHeader getTodosByCompleted={getTodosByCompleted} />
         <TodoInsert onInsert={onInsert} />
-        <TodoList todos={todos} onDelete={onDelete} onUpdate={onUpdate} />
+        {loading ? <Loading /> : <TodoList todos={todos} onDelete={onDelete} onUpdate={onUpdate} />}
       </TodoTeamplate>
     </>
   );
