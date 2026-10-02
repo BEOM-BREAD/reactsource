@@ -1,22 +1,29 @@
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { deleteBoard, getBoard } from "../apis/boardApi";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { deleteBoard } from "../apis/boardApi";
 import useBoard from "../hooks/useBoard";
+import ReplyComp from "../components/ReplyComp";
 
 const BoardDetail = () => {
   // 주소줄에 있는 id 가져오기
   const { id } = useParams();
   const navigate = useNavigate();
-  const { board, loading } = useBoard(id);
+  const { board, loading, refresh } = useBoard(id);
+
+  console.log("board", board);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentPage = Number(searchParams.get("page")) || 1;
+  const size = Number(searchParams.get("size")) || 10;
 
   const handleRemove = async (id: string | undefined) => {
     if (!id) return;
 
     try {
       const result = await deleteBoard(id);
-      console.log("삭제 후", result);
+      console.log("삭제 후 ", result);
 
       // 페이지 이동
-      navigate("/boards");
+      navigate(`/boards?page=${currentPage}&size=${size}`);
     } catch (error) {
       console.log(error);
     }
@@ -37,24 +44,24 @@ const BoardDetail = () => {
       <article className="rounded-xl border border-slate-200 bg-white">
         {/* Header */}
         <div className="border-b border-slate-200 px-8 py-7">
-          <h1 className="text-2xl font-bold">{board?.title}</h1>
+          <h1 className="text-2xl font-bold">{board.title}</h1>
 
           <div className="mt-4 flex items-center gap-4 text-sm text-slate-400">
-            <span className="font-medium text-slate-600">{board?.userId}</span>
-            <span>2026.09.17 14:32</span>
+            <span className="font-medium text-slate-600">{board?.user_id}</span>
+            <span>{board.created_at}</span>
             <span>조회 42</span>
           </div>
         </div>
 
         {/* Content */}
         <div className="min-h-[400px] px-8 py-10 leading-8 text-slate-700">
-          <p>{board?.body}</p>
+          <p>{board.contents}</p>
         </div>
 
         {/* Buttons */}
         <div className="flex justify-between border-t border-slate-200 px-8 py-5">
           <Link
-            to="/boards"
+            to={`/boards?page=${currentPage}&size=${size}`}
             className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium hover:bg-slate-50"
           >
             목록
@@ -62,7 +69,12 @@ const BoardDetail = () => {
 
           <div className="flex gap-2">
             <button
-              onClick={() => navigate(`/boards/${id}/edit`)}
+              onClick={() =>
+                navigate({
+                  pathname: `/boards/${id}/edit`,
+                  search: `?page=${currentPage}&size=${size}`,
+                })
+              }
               className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium hover:bg-slate-50"
             >
               수정
@@ -82,15 +94,7 @@ const BoardDetail = () => {
         </div>
       </article>
       {/* 댓글 보여주기 posts/${id}/comments */}
-      <section className="rounded-xl border border-slate-200 bg-white">
-        <ul>
-          {board?.comments.map((comment) => (
-            <li key={comment.id}>
-              {comment.body} = {comment.name}
-            </li>
-          ))}
-        </ul>
-      </section>
+      <ReplyComp />
     </div>
   );
 };

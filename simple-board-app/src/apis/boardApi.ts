@@ -1,21 +1,27 @@
 import axios from "axios";
-import type { BoardUpSert } from "../types/board";
+import type { BoardCreate, BoardUpdate, BoardUpSert } from "../types/board";
+
+// fastapi router 랑 통신
 
 const url = "http://127.0.0.1:8000/boards";
 
-export const getBoards = async () => {
-  const response = await axios.get(`${url}`);
+export const getRecentBoards = async () => {
+  const response = await axios.get(`${url} / recents`);
   return response.data;
 };
 
-// https://jsonplaceholder.typicode.com/posts/3
+export const getBoards = async (page: number, size: number) => {
+  const response = await axios.get(`${url}`, { params: { page, size } });
+  return response.data;
+};
+
 export const getBoard = async (id: string) => {
   const response = await axios.get(`${url}/${id}`);
   return response.data;
 };
 
 // 삽입
-export const postBoard = async (board: BoardUpSert) => {
+export const postBoard = async (board: BoardCreate) => {
   const response = await axios.post(`${url}`, board);
   return response.data;
 };
@@ -27,7 +33,7 @@ export const deleteBoard = async (id: string) => {
 };
 
 // 수정
-export const putBoard = async (id: string, board: BoardUpSert) => {
+export const putBoard = async (id: string, board: BoardUpdate) => {
   const response = await axios.put(`${url}/${id}`, board);
   return response.data;
 };
@@ -35,6 +41,6 @@ export const putBoard = async (id: string, board: BoardUpSert) => {
 // 댓글 가져오기
 // /posts/1/comments
 export const getBoardComments = async (id: string) => {
-  const response = await axios.put(`${url}/${id}/comments`);
+  const response = await axios.get(`${url}/${id}/comments`);
   return response.data;
 };

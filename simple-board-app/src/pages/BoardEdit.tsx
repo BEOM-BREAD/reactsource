@@ -1,7 +1,7 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import BoardForm from "../components/BoardForm";
 import { useEffect, useState } from "react";
-import type { Board, BoardUpSert } from "../types/board";
+import type { Board, BoardUpdate, BoardUpSert } from "../types/board";
 import { getBoard, putBoard } from "../apis/boardApi";
 import useBoard from "../hooks/useBoard";
 
@@ -11,17 +11,24 @@ const BoardEdit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  const [searchParams] = useSearchParams();
+  const currentPage = Number(searchParams.get("page")) || 1;
+  const size = Number(searchParams.get("size")) || 10;
+
   const { board, loading } = useBoard(id);
 
-  const onSubmit = async (board: BoardUpSert) => {
+  const onSubmit = async (board: BoardUpdate) => {
     if (!id) return;
 
     try {
       const result = await putBoard(id, board);
-      console.log("수정된 board", result);
+      console.log("수정된 board ", result);
 
       // 페이지 이동 => 상세조회
-      navigate(`/boards/${id}`);
+      navigate({
+        pathname: `/boards/${id}`,
+        search: `?pages=${currentPage}&size=${size}`,
+      });
     } catch (error) {
       console.log(error);
     }
