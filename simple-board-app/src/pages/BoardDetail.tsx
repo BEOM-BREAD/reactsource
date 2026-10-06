@@ -34,7 +34,8 @@ const BoardDetail = () => {
 
   // 댓글 삭제
   const handleCommentRemove = async (commentId: number) => {
-    await deleteComment(commentId);
+    const result = await deleteComment(commentId);
+    console.log(result);
   };
 
   if (loading) {
