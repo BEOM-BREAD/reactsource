@@ -1,10 +1,12 @@
+import { deleteComment } from "../apis/commentApi";
 import type { CommentResponse } from "../types/board";
 
 export type ReplyProps = {
   comments: CommentResponse[];
+  handleCommentRemove: (commentId: number) => void;
 };
 
-const ReplyComp = ({ comments }: ReplyProps) => {
+const ReplyComp = ({ comments, handleCommentRemove }: ReplyProps) => {
   return (
     <section className="mt-6 rounded-xl border border-slate-200 bg-white">
       {/* 댓글 헤더 */}
@@ -45,7 +47,12 @@ const ReplyComp = ({ comments }: ReplyProps) => {
 
                   <span className="text-slate-200">|</span>
 
-                  <button className="text-slate-400 hover:text-red-500">삭제</button>
+                  <button
+                    className="text-slate-400 hover:text-red-500"
+                    onClick={() => handleCommentRemove(comment.comment_id)}
+                  >
+                    삭제
+                  </button>
                 </div>
               </div>
 

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import type { BoardResponse } from "../types/board";
 import { getBoard } from "../apis/boardApi";
+import type { BoardResponse } from "../types/board";
 
-export const inittailBoadrd: BoardResponse = {
+export const initialBoard: BoardResponse = {
   id: 0,
   title: "",
   contents: "",
@@ -16,7 +16,7 @@ export const inittailBoadrd: BoardResponse = {
 };
 
 const useBoard = (id: string | undefined) => {
-  const [board, setBoard] = useState<BoardResponse>(inittailBoadrd);
+  const [board, setBoard] = useState<BoardResponse>(initialBoard);
   const [loading, setLoading] = useState<boolean>(true);
 
   const fetchData = async () => {
@@ -33,6 +33,7 @@ const useBoard = (id: string | undefined) => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchData();
   }, [id]);

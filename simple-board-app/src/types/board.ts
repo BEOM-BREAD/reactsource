@@ -16,7 +16,7 @@ export type UserResponse = {
 };
 
 export type CommentResponse = {
-  commnet_id: number;
+  comment_id: number;
   body: string;
   user: UserResponse;
   board_id: number;
@@ -24,7 +24,7 @@ export type CommentResponse = {
 };
 
 export type CommentCreate = {
-  body: number;
+  body: string;
   user_id: number;
   board_id: number;
 };

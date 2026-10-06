@@ -2,16 +2,19 @@ import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom"
 import { deleteBoard } from "../apis/boardApi";
 import useBoard from "../hooks/useBoard";
 import ReplyComp from "../components/ReplyComp";
+import { deleteComment } from "../apis/commentApi";
 
 const BoardDetail = () => {
   // 주소줄에 있는 id 가져오기
   const { id } = useParams();
   const navigate = useNavigate();
+
   const { board, loading, refresh } = useBoard(id);
 
   console.log("board", board);
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  // 주소줄에 ? 뒤의 값 가져오기
+  const [searchParams] = useSearchParams();
   const currentPage = Number(searchParams.get("page")) || 1;
   const size = Number(searchParams.get("size")) || 10;
 
@@ -27,6 +30,11 @@ const BoardDetail = () => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  // 댓글 삭제
+  const handleCommentRemove = async (commentId: number) => {
+    await deleteComment(commentId);
   };
 
   if (loading) {
@@ -45,16 +53,15 @@ const BoardDetail = () => {
         {/* Header */}
         <div className="border-b border-slate-200 px-8 py-7">
           <h1 className="text-2xl font-bold">{board.title}</h1>
-
           <div className="mt-4 flex items-center gap-4 text-sm text-slate-400">
-            <span className="font-medium text-slate-600">{board?.user_id}</span>
+            <span className="font-medium text-slate-600">{board.user.name}</span>
             <span>{board.created_at}</span>
             <span>조회 42</span>
           </div>
         </div>
 
         {/* Content */}
-        <div className="min-h-[400px] px-8 py-10 leading-8 text-slate-700">
+        <div className="min-h-100 px-8 py-10 leading-8 text-slate-700">
           <p>{board.contents}</p>
         </div>
 
@@ -94,7 +101,7 @@ const BoardDetail = () => {
         </div>
       </article>
       {/* 댓글 보여주기 posts/${id}/comments */}
-      <ReplyComp />
+      <ReplyComp comments={board.comments} handleCommentRemove={handleCommentRemove} />
     </div>
   );
 };

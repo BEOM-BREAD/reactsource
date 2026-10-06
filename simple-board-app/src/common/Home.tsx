@@ -1,7 +1,7 @@
-import { Link } from "react-router-dom";
-import { getRecentBoards } from "../apis/boardApi";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import type { BoardResponse } from "../types/board";
+import { getRecentBoards } from "../apis/boardApi";
 
 const Home = () => {
   const [recentPosts, setRecentPosts] = useState<BoardResponse[]>([]);

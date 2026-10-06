@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import type { Board, BoardComment, BoardPageResponse } from "../types/board";
-import { getBoard, getBoardComments, getBoards } from "../apis/boardApi";
+import { getBoards } from "../apis/boardApi";
+import type { BoardPageResponse } from "../types/board";
 
 export const initialBoardPage: BoardPageResponse = {
   items: [],

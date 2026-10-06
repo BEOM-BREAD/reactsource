@@ -1,6 +1,6 @@
 import { useState } from "react";
-import type { BoardCreate, BoardUpdate } from "../types/board";
 import { useNavigate } from "react-router-dom";
+import type { BoardCreate, BoardUpdate } from "../types/board";
 
 const BoardForm = ({ onSubmit, board }: { onSubmit: (board: BoardUpdate) => void; board?: BoardCreate }) => {
   // board 내용이 있는경우(edit) / 없는 경우 - 새글 작성

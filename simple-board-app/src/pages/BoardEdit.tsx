@@ -11,6 +11,7 @@ const BoardEdit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  // 주소줄에 ? 뒤의 값 가져오기
   const [searchParams] = useSearchParams();
   const currentPage = Number(searchParams.get("page")) || 1;
   const size = Number(searchParams.get("size")) || 10;
@@ -27,7 +28,7 @@ const BoardEdit = () => {
       // 페이지 이동 => 상세조회
       navigate({
         pathname: `/boards/${id}`,
-        search: `?pages=${currentPage}&size=${size}`,
+        search: `?page=${currentPage}&size=${size}`,
       });
     } catch (error) {
       console.log(error);

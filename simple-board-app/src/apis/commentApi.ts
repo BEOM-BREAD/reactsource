@@ -1,9 +1,9 @@
 import axios from "axios";
-import type { BoardCreate, BoardUpdate, BoardUpSert, CommentCreate, CommentUpdate } from "../types/board";
+import type { CommentCreate, CommentUpdate } from "../types/board";
 
 // fastapi router 랑 통신
 
-const url = "http://127.0.0.1:8000/boards";
+const url = "http://127.0.0.1:8000/comments";
 
 // 삽입
 export const postComment = async (comment: CommentCreate) => {
@@ -12,13 +12,13 @@ export const postComment = async (comment: CommentCreate) => {
 };
 
 // 삭제
-export const deleteComment = async (id: string) => {
+export const deleteComment = async (id: number) => {
   const response = await axios.delete(`${url}/${id}`);
   return response.data;
 };
 
 // 수정
-export const putComment = async (id: string, comment: CommentUpdate) => {
+export const putComment = async (id: number, comment: CommentUpdate) => {
   const response = await axios.put(`${url}/${id}`, comment);
   return response.data;
 };

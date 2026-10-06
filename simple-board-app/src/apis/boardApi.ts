@@ -6,7 +6,7 @@ import type { BoardCreate, BoardUpdate, BoardUpSert } from "../types/board";
 const url = "http://127.0.0.1:8000/boards";
 
 export const getRecentBoards = async () => {
-  const response = await axios.get(`${url} / recents`);
+  const response = await axios.get(`${url}/recents`);
   return response.data;
 };
 
