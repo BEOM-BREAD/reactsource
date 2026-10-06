@@ -2,7 +2,8 @@ import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom"
 import { deleteBoard } from "../apis/boardApi";
 import useBoard from "../hooks/useBoard";
 import ReplyComp from "../components/ReplyComp";
-import { deleteComment } from "../apis/commentApi";
+import { deleteComment, postComment, putComment } from "../apis/commentApi";
+import type { CommentCreate } from "../types/board";
 
 const BoardDetail = () => {
   // 주소줄에 있는 id 가져오기
@@ -34,8 +35,47 @@ const BoardDetail = () => {
 
   // 댓글 삭제
   const handleCommentRemove = async (commentId: number) => {
-    const result = await deleteComment(commentId);
-    console.log(result);
+    if (!confirm("댓글을 삭제하시겠습니까?")) {
+      return;
+    }
+
+    try {
+      const result = await deleteComment(commentId);
+      console.log(result);
+      // 현재 게시물 다시 읽어오기
+      refresh();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // 댓글 등록
+  const handleCommentSubmit = async (commentContent: string) => {
+    // id 가 undefinde 라면
+    if (!id) {
+      return;
+    }
+
+    try {
+      const comment: CommentCreate = {
+        user_id: 1,
+        board_id: parseInt(id),
+        body: commentContent,
+      };
+
+      const result = postComment(comment);
+      console.log(result);
+      refresh();
+    } catch (error) {}
+  };
+
+  // 댓글 수정
+  const handleCommentEdit = async (commentId: number, editContent: string) => {
+    try {
+      const result = putComment(commentId, { body: editContent });
+      console.log(result);
+      refresh();
+    } catch (error) {}
   };
 
   if (loading) {
@@ -102,7 +142,12 @@ const BoardDetail = () => {
         </div>
       </article>
       {/* 댓글 보여주기 posts/${id}/comments */}
-      <ReplyComp comments={board.comments} handleCommentRemove={handleCommentRemove} />
+      <ReplyComp
+        comments={board.comments}
+        handleCommentRemove={handleCommentRemove}
+        handleCommentSubmit={handleCommentSubmit}
+        handleCommentEdit={handleCommentEdit}
+      />
     </div>
   );
 };
